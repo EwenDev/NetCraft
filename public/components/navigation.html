@@ -1,0 +1,69 @@
+<nav class="navbar m-4 mx-auto p-2 w-10/12 justify-self-center">
+    <div class="flex-1 z-10">
+        <a class="btn btn-ghost" href="/">
+            <img src="/res/logoNetCraft.svg" alt="Logo de NetCraft" class="w-10 h-auto">
+            <span class="text-xl text-white">NetCraft</span>
+        </a>
+    </div>
+    <div class="flex-2">
+        <ul class="menu menu-horizontal px-1 z-20">
+            <li><a href="/" class="text-gray-300">Accueil</a></li>
+            <li>
+                <details>
+                    <summary class="text-gray-300">Outils</summary>
+                    <ul class="p-2 border-2 border-white/5 rounded-xl backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg text-gray-300 min-w-[250px]">
+                        <li><a href="/tools/cidr_mask.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">select_all</span>
+                            <span>CIDR/Masque IPv4</span>
+                        </a></li>
+                        <li><a href="/tools/conversion.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">compare_arrows</span>
+                            <span>IPv4 HEX/Binaire</span>
+                        </a></li>
+                        <li><a href="/tools/decoup.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">hub</span>
+                            <span>Découpage sous-réseaux</span>
+                        </a></li>
+                        <li><a href="/tools/trame.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">cable</span>
+                            <span>Trame Ethernet</span>
+                        </a></li>
+                        <li><a href="/tools/simpl_ipv6.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">dns</span>
+                            <span>Simplification IPv6</span>
+                        </a></li>
+                        <li><a href="/tools/interface_reseau.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">lan</span>
+                            <span>Interface Reseau</span>
+                        </a></li>
+                        <li><a href="/tools/ping_tcp.html">
+                            <span class="material-icons-outlined text-gray-300 text-[20px]">podcasts</span>
+                            <span>Ping ICMP/TCP</span>
+                        </a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+        <div class="dropdown dropdown-end ml-10 z-20">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full">
+                    <img alt="Tailwind CSS Navbar component" src="/res/user-200.png" />
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 backdrop-blur-lg bg-white/5 border-2 text-gray-300 border-white/5 rounded-xl shadow-lg">
+                <li>
+                    <a href="/profil">
+                        <span class="material-icons-outlined text-[20px]">person</span>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/api/auth/logout">
+                        <span class="material-icons-outlined text-[20px] text-red-500">logout</span>
+                        <span class="text-red-500">Se déconnecter</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

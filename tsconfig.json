@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types"],
+    "sourceMap": true,
+    "esModuleInterop": true
+  }
+}

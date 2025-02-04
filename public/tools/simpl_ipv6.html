@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Simplification IPv6 - NetCraft</title>
+    <link rel="icon" href="/res/logoNetCraft.svg">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body class="m-0 p-0 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10">
+    <div class="absolute top-1/2 left-1/2
+                w-[120vw] h-[700vh]
+                bg-gradient-to-r
+                from-[rgba(17,0,255,0.7)] from-[-80%]
+                via-[rgba(0,0,0,1)] via-[50%]
+                to-[rgba(106,0,255,0.7)] to-[180%]
+                blur-[200px]
+                transform -translate-x-1/2 -translate-y-1/2">
+    </div>
+    <div class="absolute h-[700vh] inset-0 bg-[url('/res/bruit_bg.png')] bg-repeat-y bg-center bg-top opacity-5 pointer-events-none blur-[40px] -z-0"></div>
+</div>
+<div id="navigation"></div>
+<script>
+    fetch('../../components/navigation.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navigation').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+
+<!-- Contenu principal -->
+<div class="max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <!-- Titre -->
+    <div class="space-y-4">
+        <a href="/outils.html" class="flex items-center text-gray-400 hover:text-gray-300 transition">
+            <span class="material-icons-outlined">chevron_left</span>
+            <span class="font-medium text-xs">Retour</span>
+        </a>
+        <h1 class="text-white/90 font-bold text-3xl">Simplification d'une adresse IPv6</h1>
+    </div>
+    <div id="errorAlert" role="alert" class="alert alert-error hidden absolute top-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm p-4 bg-red-600 text-white rounded-lg shadow-md flex justify-center items-center space-x-4">
+        <span class="material-icons-outlined text-2xl">error</span>
+        <span class="text-center">Adresse IP non valide</span>
+    </div>
+    <!-- Formulaire et résultats -->
+    <div class="mt-12 mb-6 flex items-center space-x-4">
+        <form class="space-y-4 w-full divide-x-3" id="simplifieForm">
+            <div class="flex justify-between items-center space-x-6 w-full">
+                <label for="ip" class="text-white/90 block text-lg font-medium">Adresse IPv6 :</label>
+                <input type="text" name="ip" id="ip" class="input input-bordered text-white placeholder-white/70 w-15/12 max-w-xs bg-black/25 border border-white/10 rounded-lg overflow-hidden" placeholder="Ex : 2001:0db8:85a3:0000:0000:8a2e:0370:7334" required>
+            </div>
+            <div class="flex justify-center">
+                <button type="submit" onclick="simplifyIPv6()" class="mt-6 btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition">Simplifier</button>
+            </div>
+        </form>
+
+        <!-- Barre verticale -->
+        <div class="border-l-2 border-white/30 min-h-[150px] mx-auto"></div>
+
+        <div class="space-y-4 w-full divide-x-3">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="text-white/90 block text-lg font-medium">Résultat :</span>
+                <span id="result" class="text-white/90 font-mono">0000.0000.0000.0000.0000.0000</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Conteneur principal -->
+<details tabindex="0" class="collapse collapse-arrow max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <!-- Titre -->
+    <summary class="collapse-title text-white/90 font-bold text-3xl">Cours sur la simplification d'une adresse IPv6</summary>
+
+    <div class="collapse-content">
+        <!-- Section Simplification -->
+        <div class="mt-6 mb-6">
+            <h2 class="text-white/90 text-2xl font-bold mb-2">Qu'est-ce que la simplification d'une adresse IPv6 ?</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                La simplification d'une adresse IPv6 permet de rendre l'adresse plus lisible en supprimant les zéros non significatifs et en utilisant des notations abrégées. Par exemple :
+                <span class="font-mono px-1 rounded">2001:0db8:85a3:0000:0000:8a2e:0370:7334</span> peut être simplifiée en <span class="font-mono px-1 rounded">2001:db8:85a3::8a2e:370:7334</span>.
+            </p>
+        </div>
+
+        <!-- Section Utilisation de l'outil -->
+        <div class="mt-12 mb-6">
+            <h2 class="text-white/90 text-2xl font-bold mb-2">Comment utiliser l'outil de simplification ?</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                Pour utiliser l'outil de simplification, saisissez l'adresse IPv6 dans le champ prévu à cet effet et cliquez sur le bouton "Simplifier". Le résultat simplifié sera affiché dans la section "Résultat".
+            </p>
+        </div>
+
+        <!-- Section Attention -->
+        <div class="mt-12 mb-6">
+            <div class="bg-base-100 p-6 border-2 border-red-500 bg-black/25 rounded-lg shadow-lg overflow-hidden">
+                <span class="text-white/90 font-bold font-black text-2xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 mr-2" fill="red">
+                        <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+                    </svg>
+                    Attention :
+                </span>
+                <br>
+                <p class="text-white/90 text-lg leading-relaxed mb-4">
+                    Assurez-vous de bien comprendre les règles de simplification des adresses IPv6 pour éviter toute confusion ou erreur.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section Exemple -->
+        <div class="mt-12 mb-6">
+            <div class="bg-black/25 p-6 rounded-lg shadow-lg">
+                <h2 class="text-white/90 text-2xl font-bold mb-2">Exemple de simplification d'une adresse IPv6</h2>
+                <br>
+                <p class="text-white/90 text-lg leading-relaxed mb-4">
+                    Soit l'adresse IPv6 <span class="font-mono">2001:0db8:0000:0000:0000:ff00:0042:8329</span>. Elle peut être simplifiée en <span class="font-mono">2001:db8::ff00:42:8329</span>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Pour aller plus loin -->
+        <div class="mt-12 mb-6">
+            <h2 class="text-white/90 text-2xl font-bold mb-2">Pour aller plus loin</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                Pour approfondir vos connaissances sur la simplification des adresses IPv6, vous pouvez consulter les ressources suivantes :
+            </p>
+            <ul class="list-disc ml-8 space-y-2 text-lg">
+                <li><a href="https://fr.wikipedia.org/wiki/IPv6" class="link text-white/90 link-hover">Wikipédia - IPv6</a></li>
+                <li><a href="https://fr.wikipedia.org/wiki/Adresse_IPv6" class="link text-white/90 link-hover">Wikipédia - Adresse IPv6</a></li>
+            </ul>
+        </div>
+    </div>
+</details>
+<div id="footer" class="mt-20"></div>
+<script>
+    fetch('/components/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+<script src="/js/simplifie.js"></script>
+</body>
+</html>

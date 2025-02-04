@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Ping ICMP/TCP - NetCraft</title>
+    <link rel="icon" href="/res/logoNetCraft.svg">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body class="m-0 p-0 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10">
+    <div class="absolute top-1/2 left-1/2
+                w-[120vw] h-[700vh]
+                bg-gradient-to-r
+                from-[rgba(17,0,255,0.7)] from-[-80%]
+                via-[rgba(0,0,0,1)] via-[50%]
+                to-[rgba(106,0,255,0.7)] to-[180%]
+                blur-[200px]
+                transform -translate-x-1/2 -translate-y-1/2">
+    </div>
+    <div class="absolute h-[700vh] inset-0 bg-[url('/res/bruit_bg.png')] bg-repeat-y bg-center bg-top opacity-5 pointer-events-none blur-[40px] -z-0"></div>
+</div>
+<div id="navigation"></div>
+<script>
+    fetch('../../components/navigation.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navigation').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+
+<!-- Contenu principal -->
+<div class="max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <!-- Titre -->
+    <div class="space-y-4">
+        <a href="/outils.html" class="flex items-center text-gray-400 hover:text-gray-300 transition">
+            <span class="material-icons-outlined">chevron_left</span>
+            <span class="font-medium text-xs">Retour</span>
+        </a>
+        <h1 class="text-white/90 font-bold text-3xl">Ping ICMP/TCP</h1>
+    </div>
+    <!-- Formulaire et résultats -->
+    <div class="mt-12 mb-6 flex items-center space-x-4">
+        <div id="errorAlertIp" role="alert"
+             class="alert alert-error hidden absolute top-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm p-4 bg-red-600 text-white rounded-lg shadow-md flex justify-center items-center space-x-4">
+            <span class="material-icons-outlined text-2xl">error</span>
+            <span class="text-center">Adresse IP non valide</span>
+        </div>
+        <div id="errorAlertPort" role="alert"
+             class="alert alert-error hidden absolute top-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm p-4 bg-red-600 text-white rounded-lg shadow-md flex justify-center items-center space-x-4">
+            <span class="material-icons-outlined text-2xl">error</span>
+            <span class="text-center">Port non valide</span>
+        </div>
+        <form id="pingForm" class="space-y-4 w-full divide-x-3">
+            <div class="flex gap-10 w-full">
+                <div class="flex gap-10 flex-col w-1/2">
+                    <h2 class="text-white/90 text-2xl font-bold">Ping ICMP</h2>
+
+                    <div class="w-full">
+                        <label for="ip_icmp" class="text-white/90 block text-lg font-medium">IP :</label>
+                        <input name="ip_icmp" id="ip_icmp" max="32"
+                               class="input text-white placeholder-white/70 input-bordered w-full bg-black/25 border border-white/10 rounded-lg overflow-hidden"
+                               placeholder="Ex : 192.168.1.1">
+                    </div>
+
+                    <button type="button" onclick="pingICMP()"
+                            class="mt-auto w-full btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition">
+                        Analyser
+                    </button>
+                </div>
+
+                <!-- Barre verticale -->
+                <div class="border-l-2 border-white/30 min-h-[150px] mx-auto"></div>
+
+
+                <div class="flex gap-10 flex-col items-start w-1/2">
+                    <h2 class="text-white/90 text-2xl font-bold">Ping TCP</h2>
+                    <div class="w-full">
+                        <label for="ip_tcp" class="text-white/90 block text-lg font-medium">IP :</label>
+                        <input name="ip_tcp" id="ip_tcp"
+                               class="input text-white placeholder-white/70 input-bordered w-full bg-black/25 border border-white/10 rounded-lg overflow-hidden"
+                               placeholder="Ex : 192.168.1.1">
+
+                        <label for="target_port" class="text-white/90 block text-lg font-medium">Port :</label>
+                        <input type="number" name="target_port" id="target_port" class="input text-white placeholder-white/70 input-bordered w-full bg-black/25 border border-white/10 rounded-lg overflow-hidden" placeholder="Ex : 22">
+                    </div>
+
+                    <button type="button" onclick="pingTCP()"
+                            class="w-full btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition">
+                        Analyser
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="ml-8">
+        <p class="text-white/90 text-lg font-medium">
+            <span class="font-bold text-2xl">Résultat :</span>
+            <br>
+            <span class="font-bold text-xs">Le resultat peut prendre du temps avant de s'afficher</span>
+            <br>
+            <span id="result" class="font-mono">...</span>
+        </p>
+    </div>
+</div>
+
+<!-- Conteneur principal -->
+<details tabindex="0"
+         class="collapse collapse-arrow max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <!-- Titre -->
+    <summary class="collapse-title text-white/90 font-bold text-3xl">Cours sur le ping TCP/IMCP</summary>
+
+    <div class="collapse-content">
+        <!-- Section Simplification -->
+        <div class="mt-6 mb-6">
+            <h2 class="text-white/90 text-2xl font-bold mb-2">Qu'est-ce que le ping ?</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                Le ping est une commande utilisée pour vérifier la connectivité entre deux hôtes sur un réseau. Elle
+                permet de tester la disponibilité d'une machine distante en envoyant des paquets ICMP (Internet Control
+                Message Protocol) et en attendant une réponse.
+            </p>
+        </div>
+
+        <!-- Qu'est ce que le TCP -->
+        <div class="mt-12 mb-6">
+            <h2 class="text-white text-2xl font-bold mb-2">Qu'est-ce que le protocole TCP ?</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                Le protocole TCP (Transmission Control Protocol) est un protocole de communication fiable et orienté
+                connexion. Il assure la livraison des données dans l'ordre et sans perte. Il est utilisé pour établir
+                des connexions entre des applications sur un réseau. Le protocole TCP est l'un des principaux protocoles
+                de la suite TCP/IP.
+            </p>
+        </div>
+
+        <!-- Que sont les paquets ICMP -->
+        <div class="mt-12 mb-6">
+            <h2 class="text-white text-2xl font-bold mb-2">Que sont les paquets ICMP ?</h2>
+            <br>
+            <p class="text-white/90 text-lg leading-relaxed mb-4">
+                Les paquets ICMP (Internet Control Message Protocol) sont utilisés pour envoyer des messages d'erreur et
+                de contrôle sur un réseau IP. Ils sont utilisés par des outils tels que le ping pour vérifier la
+                connectivité et la disponibilité des hôtes sur un réseau. Les paquets ICMP ne sont pas utilisés pour
+                transférer des données utilisateur.
+
+                <!-- Section Utilisation de l'outil -->
+            <div class="mt-12 mb-6">
+                <h2 class="text-white/90 text-2xl font-bold mb-2">Comment utiliser l'outil de ping ?</h2>
+                <br>
+                <p class="text-white/90 text-lg leading-relaxed mb-4">
+                    Pour utiliser l'outil de ping, si vous souhaitez utiliser un ping en IMCP, il suffit de rentrer
+                    l'adresse IP de la machine distante que vous souhaitez pinger. Si vous souhaitez utiliser un ping en
+                    TCP, il vous suffit de rentrer l'adresse IP de la machine distante et le port sur lequel vous
+                    souhaitez effectuer le ping.
+                </p>
+            </div>
+
+            <!-- Section Attention -->
+            <div class="mt-12 mb-6">
+                <div class="bg-base-100 p-6 border-2 border-red-500 bg-black/25 rounded-lg shadow-lg overflow-hidden">
+                <span class="text-white/90 font-bold font-black text-2xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 mr-2" fill="red">
+                        <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+                    </svg>
+                    Attention :
+                </span>
+                    <br>
+                    <p class="text-white/90 text-lg leading-relaxed mb-4">
+                        Assurez-vous de bien saisir l'adresse IP de la machine distante que vous souhaitez pinger. Une
+                        adresse IP incorrecte peut entraîner un échec du ping.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pour aller plus loin -->
+            <div class="mt-12 mb-6">
+                <h2 class="text-white/90 text-2xl font-bold mb-2">Pour aller plus loin</h2>
+                <br>
+                <p class="text-white/90 text-lg leading-relaxed mb-4">
+                    Pour en savoir plus sur le ping, les protocoles TCP et ICMP, vous pouvez consulter les liens
+                    suivants :
+                </p>
+                <ul class="text-white/90 list-disc ml-8 space-y-2 text-lg">
+                    <li><a href="https://fr.wikipedia.org/wiki/Ping" class="link link-hover">Wikipédia -
+                        Ping</a></li>
+                    <li><a href="https://fr.wikipedia.org/wiki/Transmission_Control_Protocol"
+                           class="link link-hover">Wikipédia - Transmission Control Protocol</a></li>
+                    <li><a href="https://fr.wikipedia.org/wiki/Internet_Control_Message_Protocol"
+                           class="link link-hover">Wikipédia - Internet Control Message Protocol</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</details>
+<div id="footer" class="mt-20"></div>
+<script>
+    fetch('/components/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+<script src="/js/icmp_tcp.js"></script>
+</body>
+</html>

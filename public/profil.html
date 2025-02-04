@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Profil - NetCraft</title>
+    <link rel="icon" href="/res/logoNetCraft.svg">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" type="text/css"/>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="js/user.js"></script>
+    <script src="/js/passwordVisibility.js"></script>
+</head>
+<body class="m-0 p-0 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10">
+    <div class="absolute top-1/2 left-1/2
+                w-[120vw] h-[700vh]
+                bg-gradient-to-r
+                from-[rgba(17,0,255,0.7)] from-[-80%]
+                via-[rgba(0,0,0,1)] via-[50%]
+                to-[rgba(106,0,255,0.7)] to-[180%]
+                blur-[200px]
+                transform -translate-x-1/2 -translate-y-1/2">
+    </div>
+    <div class="absolute h-[700vh] inset-0 bg-[url('/res/bruit_bg.png')] bg-repeat-y bg-center bg-top opacity-5 pointer-events-none blur-[40px] -z-0"></div>
+</div>
+<div id="navigation"></div>
+<div role="alert" id="alertdiv" class="absolute alert alert-warning w-10/12 mx-auto left-1/2 transform -translate-x-1/2 mt-3" hidden>
+    <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24">
+        <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+    <span id="alertspan"></span>
+</div>
+<div role="alert" id="successdiv" class="absolute alert alert-success w-10/12 mx-auto left-1/2 transform -translate-x-1/2 mt-3" hidden>
+    <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24">
+        <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="successspan"></span>
+</div>
+<script>
+    fetch('/components/navigation.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navigation').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+<div class="hero min-h-screen">
+    <div class="card w-full max-w-2xl backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg px-8 pt-4 mb-40">
+        <div class="card-body space-y-5">
+            <!-- Titre "Profil" en haut à gauche avec espace en dessous -->
+            <div class="space-y-4">
+                <a href="outils.html" class="flex items-center text-gray-400 hover:text-gray-300 transition">
+                    <span class="material-icons-outlined">chevron_left</span>
+                    <span class="font-medium text-xs">Retour</span>
+                </a>
+                <h1 class="text-white text-2xl font-bold mt-0">Profil</h1>
+            </div>
+
+            <!-- Container flex pour Avatar et Stats -->
+            <div class="flex items-center mt-12 mb-10 space-x-6">
+                <!-- Titre Stats (aligné avec les infos ci-dessous) -->
+                <div class="flex-1 text-left">
+                    <h2 class="text-xl font-bold mb-2 text-white"><span id="NomUtilisateur"></span></h2>
+                    <!-- Stats détaillées -->
+                    <p class="text-lg font-medium text-white">
+                        <span class="font-bold">Rôle : </span><span id="Role"></span>
+                    </p>
+                    <p class="text-lg font-medium text-white">
+                        <span class="font-bold">Email : </span><span id="Email"></span>
+                    </p>
+                </div>
+                <!-- Avatar (plus gros avec w-28 et h-28) -->
+                <div class="w-32 h-32 rounded-full bg-gray-200 border-2 border-black flex items-center justify-center">
+                    <img src="/res/user-200.png"
+                         alt="Avatar"
+                         class="w-full h-full object-cover rounded-full"/>
+                </div>
+            </div>
+
+            <!-- Menu des options (boutons centrés avec même largeur et espacement) -->
+            <div class="mt-6 flex flex-col items-center space-y-4">
+                <button class="cursor-pointer hover:text-gray-300 font-medium text-white focus:outline-none border-2 border-white/5 backdrop-blur-lg bg-white/5 rounded-lg w-[250px] px-4 py-2"
+                        onclick="changePasswd.showModal()">Changer de mot de passe
+                </button>
+
+                <button id="roleBasedButton" class="cursor-pointer hover:text-gray-300 font-medium text-white focus:outline-none border-2 border-white/5 backdrop-blur-lg bg-white/5 rounded-lg w-[250px] px-4 py-2">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dialogues -->
+    <dialog id="changePasswd" class="modal">
+        <div class="modal-box backdrop-blur-3xl bg-white/5 border-2 border-white/5 rounded-xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
+            </form>
+            <div class="space-y-4">
+                <h2 class="text-white text-2xl font-bold mt-0">Changer de mot de passe</h2>
+            </div>
+                <div class="form-control mt-4">
+                    <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-hidden">
+                        <span class="material-icons-outlined text-white/70 text-[20px] pl-4">password</span>
+                        <input type="password" id="OldPassword" placeholder="Ancien mot de passe"
+                               class="input placeholder-white/70 bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full"
+                               required/>
+                        <button type="button" id="toggleOldPassword" class="flex items-center justify-center pr-4">
+                            <span class="material-icons-outlined text-white/70 text-[20px] cursor-pointer"
+                                  id="OldEyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-control mt-4">
+                    <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-hidden">
+                        <span class="material-icons-outlined text-white/70 text-[20px] pl-4">password</span>
+                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe"
+                               class="input placeholder-white/70 bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full"
+                               required/>
+                        <button type="button" id="toggleNewPassword" class="flex items-center justify-center pr-4">
+                            <span class="material-icons-outlined text-white/70 text-[20px] cursor-pointer"
+                                  id="newEyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-control mt-4">
+                    <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-hidden">
+                        <span class="material-icons-outlined text-white/70 text-[20px] pl-4">password</span>
+                        <input type="password" id="confirmPassword" placeholder="Confirmez le mot de passe"
+                               class="input placeholder-white/70 bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full"
+                               required/>
+                        <button type="button" id="toggleConfirmPassword" class="flex items-center justify-center pr-4">
+                            <span class="material-icons-outlined text-white/70 text-[20px] cursor-pointer"
+                                  id="confimEyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-control mt-6">
+                    <button class="mt-6 btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition" onclick="changePassword()">
+                        <span class="font-medium">Valider</span>
+                        <span class="material-icons-outlined text-[20px]">chevron_right</span>
+                    </button>
+                </div>
+        </div>
+    </dialog>
+
+    <dialog id="suppressionCompte" class="modal">
+        <div class="modal-box backdrop-blur-3xl bg-white/5 border-2 border-white/5 rounded-xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
+            </form>
+            <div class="space-y-4">
+                <h2 class="text-white text-2xl font-bold mt-0">Supprimer le compte</h2>
+                <p class="modal-message text-lg font-medium text-white"></p>
+            </div>
+            <div class="form-control mt-6">
+                    <button class="confirm-delete btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition">
+                        <span class="font-medium">Supprimer</span>
+                        <span class="material-icons-outlined text-[20px]">chevron_right</span>
+                    </button>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="gestionUsers" class="modal">
+        <div class="modal-box backdrop-blur-3xl bg-white/5 border-2 border-white/5 rounded-xl w-6/12 max-w-5xl max-h-[80vh]">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
+            </form>
+            <div class="space-y-4">
+                <h2 class="text-white text-2xl font-bold mt-0">Gérer les utilisateurs</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table id="usersTable" class="table text-white/60">
+                    <thead>
+                    <tr class="text-white">
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Supprimer le profil</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="deleteUserModal" class="modal">
+        <div class="modal-box backdrop-blur-3xl bg-white/5 border-2 border-white/5 rounded-xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
+            </form>
+            <div class="space-y-4">
+                <h2 class="text-white text-2xl font-bold mt-0">Supprimer le compte</h2>
+                <p class="modal-message text-lg font-medium text-white"></p>
+            </div>
+            <div class="form-control mt-6">
+                <button class="confirm-delete btn bg-white text-gray-800 font-semibold hover:bg-red-100 border-none shadow-md transition">
+                    <span class="font-medium">Supprimer</span>
+                    <span class="material-icons-outlined text-[20px]">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </dialog>
+</div>
+<div id="footer" class="absolute top-full w-full"></div>
+<script>
+    fetch('/components/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+</body>
+</html>

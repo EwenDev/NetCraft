@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Conversion IPv4 - NetCraft</title>
+    <link rel="icon" href="/res/logoNetCraft.svg">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body class="m-0 p-0 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10">
+    <div class="absolute top-1/2 left-1/2
+                w-[120vw] h-[700vh]
+                bg-gradient-to-r
+                from-[rgba(17,0,255,0.7)] from-[-80%]
+                via-[rgba(0,0,0,1)] via-[50%]
+                to-[rgba(106,0,255,0.7)] to-[180%]
+                blur-[200px]
+                transform -translate-x-1/2 -translate-y-1/2">
+    </div>
+    <div class="absolute h-[700vh] inset-0 bg-[url('/res/bruit_bg.png')] bg-repeat-y bg-center bg-top opacity-5 pointer-events-none blur-[40px] -z-0"></div>
+</div>
+<div id="navigation"></div>
+<script>
+    fetch('../../components/navigation.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navigation').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+
+<div class="max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <div class="space-y-4">
+        <a href="/outils.html" class="flex items-center text-gray-400 hover:text-gray-300 transition">
+            <span class="material-icons-outlined">chevron_left</span>
+            <span class="font-medium text-xs">Retour</span>
+        </a>
+        <h1 class="text-white/90 font-bold text-3xl">Outil de conversion d'adresse IPv4</h1>
+    </div>
+    <div id="errorAlert" role="alert" class="alert alert-error hidden absolute top-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm p-4 bg-red-600 text-white/90 rounded-lg shadow-md flex justify-center items-center space-x-4">
+        <span class="material-icons-outlined text-2xl">error</span>
+        <span class="text-center">Adresse IP non valide</span>
+    </div>
+
+
+    <div class="mt-12 mb-6 flex items-center space-x-4">
+        <form id="ipForm" class="space-y-4 w-full divide-x-3">
+            <div class="flex justify-between items-center space-x-4 w-full">
+                <label for="ip" class="text-white/90 block text-lg font-medium">Adresse IP :</label>
+                <input type="text" name="ip" id="ip" placeholder="Ex : 192.168.10.29" class="input text-white placeholder-white/70 input-bordered w-8/12 max-w-xs bg-black/25 border border-white/10 rounded-lg overflow-hidden" required>
+            </div>
+            <div class="flex justify-center">
+                <button type="submit" class="mt-4 btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition">Convertir</button>
+            </div>
+        </form>
+
+        <!-- Barre verticale -->
+        <div class="border-l-2 border-white/30 min-h-[150px] mx-auto"></div>
+
+        <div class="space-y-4 w-full divide-x-3">
+            <p class="text-lg font-medium">
+                <span class="text-white/90 block text-lg font-medium">Résultat en binaire :</span>
+                <span id="binaryResult" class="text-white/90 font-mono">00000000.00000000.00000000.00000000</span>
+            </p>
+            <p class="text-lg font-medium mt-4">
+                <span class="text-white/90 block text-lg font-medium">Résultat en héxadécimal :</span>
+                <span id="hexResult" class="text-white/90 font-mono">00.00.00.00</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<details tabindex="0" class="collapse collapse-arrow max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+    <summary class="collapse-title text-white/90 font-bold text-3xl">Cours sur la conversion d'IPv4</summary>
+
+    <div class="collapse-content">
+        <div class="mt-6 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Qu'est ce qu'une adresse IP ?</span>
+                <br><br>
+                Une adresse IP est un identifiant unique attribué à chaque appareil connecté à un réseau informatique
+                utilisant le protocole IP. Elle permet d'identifier de manière unique chaque appareil sur le réseau.
+            </p>
+        </div>
+        <div class="mt-12 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Qu'est ce que la conversion d'adresse IP ?</span>
+                <br><br>
+                La conversion d'adresse IP consiste à convertir une adresse IPv4 en binaire ou en héxadécimal. Cela permet
+                de mieux comprendre le fonctionnement des adresses IP et de les manipuler plus facilement.
+            </p>
+        </div>
+        <div class="mt-12 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Comment convertir une adresse IP en binaire ?</span>
+                <br><br>
+                Pour convertir une adresse IP en binaire, il suffit de convertir chaque octet de l'adresse IP en binaire.
+                Chaque octet est composé de 8 bits, ce qui permet d'obtenir une adresse IP en binaire de 32 bits. Chaque bit
+                de l'adresse IP correspond à un chiffre binaire, 0 ou 1.
+            </p>
+        </div>
+        <div class="mt-12 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Comment convertir une adresse IP en héxadécimal ?</span>
+                <br><br>
+                Pour convertir une adresse IP en héxadécimal, il suffit de convertir chaque octet de l'adresse IP en
+                héxadécimal. Chaque octet est composé de 8 bits, ce qui permet d'obtenir une adresse IP en héxadécimal de 32
+                bits. L'héxadécimal est une base de numération de 16 chiffres, de 0 à F. Chaque chiffre héxadécimal
+                correspond à 4 bits. Par exemple, le chiffre 0 correspond à 0000 en binaire, le chiffre 1 correspond à 0001
+                en binaire, le chiffre 2 correspond à 0010 en binaire, etc.
+            </p>
+        </div>
+        <div class="mt-12 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Comment utiliser l'outil de conversion d'adresse IP ?</span>
+                <br><br>
+                Pour utiliser l'outil de conversion d'adresse IP, il suffit de saisir l'adresse IP à convertir dans le champ
+                prévu à cet effet. L'outil affichera ensuite le résultat de la conversion en binaire et en héxadécimal.
+            </p>
+        </div>
+        <div class="mt-12 mb-6">
+            <div class="bg-base-100 p-6 border-2 border-red-500 bg-black/25 rounded-lg shadow-lg overflow-hidden">
+                <p class="text-white/90 text-lg font-medium">
+                        <span class="font-bold font-black text-2xl flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 mr-2" fill="red">
+                                <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+                            </svg>
+                            Attention :
+                        </span>
+                    <br>
+                    L'adresse IP doit être saisie sous la forme suivante : <span class="font-mono">xxx.xxx.xxx.xxx</span>,
+                    où <span class="font-mono">xxx</span> est un nombre compris entre 0 et 255.
+                </p>
+            </div>
+        </div>
+        <div class="mt-12 mb-6">
+            <div class="bg-black/25 p-6 rounded-lg shadow-lg">
+                <p class="text-white/90 text-lg font-medium">
+                    <span class="text-white/90 font-bold text-2xl">Exemple d'adresse IPv4 à convertir :</span>
+                    <br><br>
+                <div class="mb-4">
+                    <!-- Adresse IP en décimal -->
+                    <div class="text-white/90 flex items-center mb-2">
+                        <span><span class="font-bold">10.0.30.65</span> (adresse IP en décimal)</span>
+                    </div>
+
+                    <!-- Adresse IP en binaire -->
+                    <div class="text-white/90 flex items-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5 mr-2" fill="white">
+                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                        </svg>
+                        <span><span
+                                class="text-white/90 font-mono">00001010.00000000.00011110.01000001</span> (adresse IP en binaire)</span>
+                    </div>
+
+                    <!-- Adresse IP en hexadécimal -->
+                    <div class="text-white/90 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5 mr-2" fill="white">
+                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                        </svg>
+                        <span><span class="text-white/90 font-mono">0A.00.1E.41</span> (adresse IP en hexadécimal)</span>
+                    </div>
+                </div>
+                <br>
+                <div class="mb-4">
+                    <!-- Adresse IP en décimal -->
+                    <div class="text-white/90 flex items-center mb-2">
+                        <span><span class="text-white/90 font-bold mr-2">178.32.87.19</span> (adresse IP en décimal)</span>
+                    </div>
+
+                    <!-- Adresse IP en binaire -->
+                    <div class="text-white/90 flex items-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5 mr-2" fill="white">
+                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                        </svg>
+                        <span><span
+                                class="font-mono">10110010.00100000.01010111.00010011</span> (adresse IP en binaire)</span>
+                    </div>
+
+                    <!-- Adresse IP en hexadécimal -->
+                    <div class="text-white/90 flex items-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5 mr-2" fill="white">
+                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/>
+                        </svg>
+                        <span><span class="font-mono">B2.20.57.13</span> (adresse IP en hexadécimal)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-12 mb-6">
+            <p class="text-white/90 text-lg font-medium">
+                <span class="font-bold text-2xl">Pour aller plus loin :</span>
+                <br><br>
+                Pour en savoir plus sur la conversion d'adresse IP, vous pouvez consulter les ressources suivantes :
+            <ul class="text-white/90 list-disc ml-8 space-y-2 text-lg">
+                <li><a href="https://fr.wikipedia.org/wiki/Adresse_IP" class="link link-hover">Wikipédia - Adresse IP</a>
+                </li>
+                <li><a href="https://fr.wikipedia.org/wiki/IPv4" class="link link-hover">Wikipédia - IPv4</a></li>
+            </ul>
+        </div>
+    </div>
+</details>
+<div id="footer" class="mt-20"></div>
+<script>
+    fetch('/components/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+<script src="/js/conversion.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "netcraft",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsx --env-file=.env --watch  src/index.ts",
+    "build": "webpack --mode development",
+    "prod": "webpack --mode production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.10.2",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
+    "memorystore": "^1.6.7",
+    "mysql2": "^3.11.5",
+    "python-shell": "^5.0.0"
+  }
+}

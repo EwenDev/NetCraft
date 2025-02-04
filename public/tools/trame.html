@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Trame Ethernet - NetCraft</title>
+    <link rel="icon" href="/res/logoNetCraft.svg">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="/js/trameEthernet.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body class="m-0 p-0 overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10">
+    <div class="absolute top-1/2 left-1/2
+                w-[120vw] h-[700vh]
+                bg-gradient-to-r
+                from-[rgba(17,0,255,0.7)] from-[-80%]
+                via-[rgba(0,0,0,1)] via-[50%]
+                to-[rgba(106,0,255,0.7)] to-[180%]
+                blur-[200px]
+                transform -translate-x-1/2 -translate-y-1/2">
+    </div>
+    <div class="absolute h-[700vh] inset-0 bg-[url('/res/bruit_bg.png')] bg-repeat-y bg-center bg-top opacity-5 pointer-events-none blur-[40px] -z-0"></div>
+</div>
+<div id="navigation"></div>
+<script>
+  fetch('../../components/navigation.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navigation').innerHTML = data;
+          })
+          .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+
+<div class="max-w-4xl mx-auto pr-16 mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+  <div class="space-y-4">
+    <a href="/outils.html" class="flex items-center text-gray-400 hover:text-gray-300 transition">
+      <span class="material-icons-outlined">chevron_left</span>
+      <span class="font-medium text-xs">Retour</span>
+    </a>
+    <h1 class="text-white/90 font-bold text-3xl">Composition d'une trame Ethernet</h1>
+  </div>
+  <div class="mt-12 mb-6 flex items-center space-x-4 flex justify-between w-full">
+    <div class="flex flex-col space-y-4 ml-10 justify-center">
+        <div>
+          <label for="src_mac" class="text-white/90 block text-lg font-medium">Adresse mac de source :</label>
+          <input type="text" name="src_mac" id="src_mac" placeholder="Ex : 00:1A:2B:3C:4D:5E" class="input text-white placeholder-white/70 input-bordered w-full max-w-xs bg-black/25 border border-white/10 rounded-lg overflow-hidden" required>
+        </div>
+        <div>
+          <label for="dst_mac" class="text-white/90 block text-lg font-medium">Adresse mac de destination :</label>
+          <input type="text" name="dst_mac" id="dst_mac" placeholder="Ex : 00:1A:2B:3C:4D:5E" class="input text-white placeholder-white/70 input-bordered w-full max-w-xs bg-black/25 border border-white/10 rounded-lg overflow-hidden" required>
+        </div>
+        <div>
+          <label for="eth_type" class="text-white/90 block text-lg font-medium">Type de Protocole (en hexadécimal) :</label>
+          <input type="text" name="eth_type" id="eth_type" placeholder="Ex : 0800 (IPv4)" class="input text-white placeholder-white/70 input-bordered w-full max-w-xs bg-black/25 border border-white/10 rounded-lg overflow-hidden">
+        </div>
+        <div>
+          <label for="content" class="text-white/90 block text-lg font-medium">Contenu :</label>
+          <input type="text" name="content" id="content" class="input input-bordered w-full max-w-xs text-white bg-black/25 border border-white/10 rounded-lg overflow-hidden">
+        </div>
+        <button type="button" onclick="constructionTrame()" class="mt-6 btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition ">Analyser</button>
+      <div class="border-l-2 border-gray-300 h-full mx-4"></div>
+    </div>
+    <div class="border-l-2 border-white/30 min-h-[300px] mx-auto"></div>
+    <div class="space-y-4 self-start mx-10 min-w-[400px]">
+      <p class="text-white/90 text-lg font-medium">
+        <span class="font-bold text-2xl">Résultat :</span>
+      </p>
+      <div id="result" class='mockup-code max-w-4xl min-h-[300px] w-full p-6 shadow-2xl shrink-0 relative backdrop-blur-lg bg-black/40 border-2 border-white/5 rounded-xl shadow-lg'></div>
+    </div>
+  </div>
+</div>
+
+<details tabindex="0" class="collapse collapse-arrow max-w-4xl mx-auto mt-10 p-8 bg-base-100 rounded-lg shadow-2xl shrink-0 relative backdrop-blur-lg bg-white/5 border-2 border-white/5 rounded-xl shadow-lg">
+  <summary class="collapse-title text-white/90 font-bold text-3xl">Cours sur la trame Ethernet</summary>
+  <div class="collapse-content">
+    <div class="mt-6 mb-6">
+      <p class="text-white/90 ext-lg font-medium">
+        <span class="font-bold text-2xl">Qu'est-ce qu'une trame Ethernet ?</span>
+        <br><br>
+        Une trame Ethernet est une unité de données de communication utilisée dans les réseaux informatiques. Elle contient des informations telles que l'adresse MAC source et destination, le type de protocole, et les données utiles.
+      </p>
+    </div>
+    <div class="mt-12 mb-6">
+      <p class="text-white/90 text-lg font-medium">
+        <span class="font-bold text-2xl">Structure d'une trame Ethernet :</span>
+        <br><br>
+        Une trame Ethernet typique se compose des éléments suivants :
+      <ul class="text-white/90 list-disc ml-6">
+        <li><span class="font-bold">Préambule :</span> Séquence de bits pour synchroniser la communication.</li>
+        <li><span class="font-bold">Adresse MAC de destination :</span> Adresse matérielle du destinataire.</li>
+        <li><span class="font-bold">Adresse MAC source :</span> Adresse matérielle de l'expéditeur.</li>
+        <li><span class="font-bold">Type/Longueur :</span> Indique le type de protocole ou la longueur des données.</li>
+        <li><span class="font-bold">Données :</span> Les données utiles à transmettre.</li>
+        <li><span class="font-bold">Contrôle de redondance cyclique (CRC) :</span> Utilisé pour détecter les erreurs de transmission.</li>
+      </ul>
+    </div>
+    <div class="mt-12 mb-6">
+      <p class="text-white/90 text-lg font-medium">
+        <span class="font-bold text-2xl">Comment utiliser l'outil ?</span>
+        <br><br>
+        Remplissez les champs avec les adresses MAC de destination et source, ainsi que le type de protocole (en hexadécimal) pour analyser une trame Ethernet.
+      </p>
+    </div>
+    <div class="mt-12 mb-6">
+      <div class="bg-base-100 p-6 border-2 border-red-500 bg-black/25 rounded-lg shadow-lg overflow-hidden">
+        <p class="text-white/90 text-lg font-medium">
+          <span class="font-bold font-black text-2xl flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 mr-2" fill="red">
+              <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+            </svg>
+            Attention :
+          </span>
+          <br>
+          L'adresse MAC doit être saisie sous la forme suivante : <span class="font-mono">xx:xx:xx:xx:xx:xx</span>, où <span class="font-mono">xx</span> est un nombre hexadécimal compris entre 00 et FF.
+        </p>
+      </div>
+    </div>
+    <div class="mt-12 mb-6">
+      <div class="bg-black/25 p-6 rounded-lg shadow-lg">
+        <p class="text-white/90 text-lg font-medium">
+          <span class="font-bold text-2xl">Exemple de trame Ethernet :</span>
+          <br><br>
+        <div class="text-white/90 mb-4">
+          <!-- Trame Ethernet en hexadécimal -->
+          <div class="flex items-center mb-2">
+            <span><span class="font-bold">00:1A:2B:3C:4D:5E</span> (adresse MAC de destination)</span>
+          </div>
+          <div class="flex items-center mb-2">
+            <span><span class="font-bold">00:1A:2B:3C:4D:5F</span> (adresse MAC source)</span>
+          </div>
+          <div class="flex items-center mb-2">
+            <span><span class="font-bold">0800</span> (type de protocole : IPv4)</span>
+          </div>
+          <div class="flex items-center mb-2">
+            <span><span class="font-bold">Données utiles...</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 mb-6">
+      <p class="text-white/90 text-lg font-medium">
+        <span class="font-bold text-2xl">Pour aller plus loin :</span>
+        <br><br>
+        Pour en savoir plus sur les trames Ethernet, vous pouvez consulter les ressources suivantes :
+      <ul class="text-white/90 list-disc ml-8 space-y-2 text-lg">
+        <li><a href="https://fr.wikipedia.org/wiki/Ethernet" class="link link-hover">Wikipédia - Ethernet</a></li>
+        <li><a href="https://fr.wikipedia.org/wiki/Trame_Ethernet" class="link link-hover">Wikipédia - Trame Ethernet</a></li>
+      </ul>
+    </div>
+  </div>
+</details>
+<div id="footer" class="mt-20"></div>
+<script>
+  fetch('/components/footer.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('footer').innerHTML = data;
+          })
+          .catch(error => console.error('Erreur lors du chargement :', error));
+</script>
+</body>
+</html>
