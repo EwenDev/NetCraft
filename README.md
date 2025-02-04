@@ -4,8 +4,7 @@
 <div align="center">
 <img src="public/res/logoNetCraft.svg" width="200px" align="left" alt="Logo" />
 
-<h1 align="center">NetCraft</h1>
-<h3 align="center">Par des étudiants, pour des étudiants</h3>
+<h3 align="center">NetCraft</h3>
 
 <p align="center">
 Application de boîte à outils pédagogique réseaux, conçue et développée pour le projet de Saé5.01.
